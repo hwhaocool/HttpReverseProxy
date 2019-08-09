@@ -64,7 +64,7 @@ func reverseProxy(ctx *gin.Context) {
 	target := GetDestination(ctx)
 
 	if strings.HasPrefix(target, "http") == false {
-		target += "http://"
+		target = "http://" + target
 	}
 
 	url, _ := url.Parse(target)
