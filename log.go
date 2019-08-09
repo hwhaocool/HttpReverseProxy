@@ -13,7 +13,7 @@ var Logger *zap.Logger
 
 // InitLogger 初始化
 func InitLogger() *zap.Logger {
-	Logger = initLogger("logs/proxy-b.log", "info")
+	Logger = initLogger("logs/proxy-grey.log", "info")
 	return Logger
 }
 
