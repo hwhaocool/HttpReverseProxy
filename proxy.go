@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -61,6 +62,11 @@ func reverseProxy(ctx *gin.Context) {
 	start := time.Now().UnixNano() / 1e6
         
 	target := GetDestination(ctx)
+
+	if strings.HasPrefix(target, "http") == false {
+		target += "http://"
+	}
+
 	url, _ := url.Parse(target)
 
 	proxy := httputil.NewSingleHostReverseProxy(url)
