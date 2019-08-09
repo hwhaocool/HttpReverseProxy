@@ -16,7 +16,8 @@ var configFilePath = "./config/config.yaml"
 //serviceMap key是缩写，value 是 host
 var serviceMap = make(map[string]string)
 
-// var ruleList = []RuleSet
+//[]RuleSet
+var  ruleList []RuleSet
 
 // Config 配置文件
 var Config GreyConfig
@@ -44,11 +45,13 @@ type RuleSet struct {
 	ServiceName string
 }
 
+// HeaderRule HeaderRule
 type HeaderRule struct {
 	Key   string
 	Value string
 }
 
+//CookieRule cookie
 type CookieRule struct {
 	Key   string
 	Value string
@@ -100,13 +103,17 @@ func checkRule() {
 		Logger.Fatal("yamlFile services occur error, you should set default servie's host", zap.String("default service name", Config.DefaultService))
 	}
 
+	ruleList = make([]RuleSet, len(Config.Rules))
+
 	for index, rule := range Config.Rules {
 		if rule.ServiceName == "" {
 			Logger.Fatal("yamlFile rules occur error, you should set service for rule", zap.Int("index", index))
 		}
 
-		analysisRule(rule)
+		analysisRule(index, rule)
 	}
+
+	Logger.Info("rule is ", zap.Any("ruleList", ruleList))
 	
 }
 
@@ -114,13 +121,36 @@ func serviceError(index int, service Service) {
 	Logger.Error("yamlFile services occur error", zap.Int("index", index), zap.String("name", service.Name))
 }
 
-func analysisRule(rule Rule) {
+func analysisRule(index int, rule Rule) {
 	ruleByte := []byte(rule.Rule)
 
 	reg := regexp.MustCompile(`(header|cookie)\(\s*\"([^"]+)\"\s*,\s*\"([^"]+)\"\s*\)`)
 
+	ruleList[index].ServiceName = rule.ServiceName
+
+	//多个 result 之间是 并且 的关系
 	for _, result := range reg.FindAllSubmatch(ruleByte, -1) {
+
 		Logger.Info("", zap.ByteStrings("result", result))
+
+		ruleType := string(result[1])
+		ruleKey := string(result[2])
+		ruleValue := string(result[3])
+
+		switch ruleType {
+		case "header":
+			h := new(HeaderRule)
+			h.Key = ruleKey
+			h.Value = ruleValue
+
+			_ = append(ruleList[index].Headers, *h)
+		case "cookie":
+			h := new(CookieRule)
+			h.Key = ruleKey
+			h.Value = ruleValue
+
+			_ = append(ruleList[index].Cookies, *h)
+		}
 	}
 	
 }
