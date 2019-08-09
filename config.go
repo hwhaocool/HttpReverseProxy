@@ -130,7 +130,7 @@ func analysisRule(index int, rule Rule) {
 
 	currentRule.ServiceName = rule.ServiceName
 	currentRule.Headers = make([]HeaderRule, 0)
-	currentRule.Cookies = make([]CookieRule, 10)
+	currentRule.Cookies = make([]CookieRule, 0)
 
 	//多个 result 之间是 并且 的关系
 	for _, result := range reg.FindAllSubmatch(ruleByte, -1) {
@@ -147,13 +147,7 @@ func analysisRule(index int, rule Rule) {
 			h.Key = ruleKey
 			h.Value = ruleValue
 
-			// k := HeaderRule{
-			// 	Key: ruleKey,
-			// 	Value : ruleValue,
-			// }
-
 			currentRule.Headers = append(currentRule.Headers, *h)
-			// append(currentRule.Headers, k)
 		case "cookie":
 			h := new(CookieRule)
 			h.Key = ruleKey
