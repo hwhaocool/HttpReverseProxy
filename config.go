@@ -164,8 +164,13 @@ func analysisRule(index int, rule Rule) {
 	currentRule.Headers = make([]HeaderRule, 0)
 	currentRule.Cookies = make([]CookieRule, 0)
 
+	//是否有不合法的规则
+	ok := false
+
 	//多个 result 之间是 并且 的关系
 	for _, result := range reg.FindAllSubmatch(ruleByte, -1) {
+
+		ok = true
 
 		Logger.Info("", zap.ByteStrings("result", result))
 
@@ -187,6 +192,10 @@ func analysisRule(index int, rule Rule) {
 
 			currentRule.Cookies = append(currentRule.Cookies, *h)
 		}
+	}
+
+	if ! ok {
+		Logger.Fatal("current rule is inavlid", zap.Int("index", index), zap.String("rule", rule.Rule))
 	}
 
 	ruleList[index] = *currentRule
