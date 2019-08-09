@@ -76,6 +76,8 @@ func InitConfigFile() {
 	}
 
 	Logger.Info("", zap.Any("config", Config))
+
+	checkRule()
 }
 
 //checkRule 校验规则
@@ -104,7 +106,6 @@ func checkRule() {
 
 		analysisRule(rule)
 	}
-
 	
 }
 
