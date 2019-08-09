@@ -126,10 +126,10 @@ func analysisRule(index int, rule Rule) {
 
 	reg := regexp.MustCompile(`(header|cookie)\(\s*\"([^"]+)\"\s*,\s*\"([^"]+)\"\s*\)`)
 
-	currentRule := ruleList[index]
+	currentRule := new(RuleSet)
 
 	currentRule.ServiceName = rule.ServiceName
-	currentRule.Headers = make([]HeaderRule, 10)
+	currentRule.Headers = make([]HeaderRule, 0)
 	currentRule.Cookies = make([]CookieRule, 10)
 
 	//多个 result 之间是 并且 的关系
@@ -163,6 +163,7 @@ func analysisRule(index int, rule Rule) {
 		}
 	}
 
+	ruleList[index] = *currentRule
 	Logger.Info("current rule set", zap.Any("rule", currentRule))
 	
 }
