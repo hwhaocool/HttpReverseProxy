@@ -48,4 +48,14 @@ spec:
         volumeMounts:
         - name: grey-config
           mountPath: /app/config/
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 2
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
 ---
