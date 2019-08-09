@@ -58,8 +58,6 @@ type CookieRule struct {
 // InitConfigFile 初始化配置
 func InitConfigFile() {
 
-	// var logger = myLog.Logger
-
 	Logger.Info("xxx")
 
 	//读文件
@@ -67,23 +65,23 @@ func InitConfigFile() {
 	if err != nil {
 
 		//出错，直接退出
-		logger.Fatal("yamlFile read error", zap.Error(err))
+		Logger.Fatal("yamlFile read error", zap.Error(err))
 	}
 
 	// 解析yaml 内容到 Config
 	err = yaml.Unmarshal(yamlFile, &Config)
 
 	if err != nil {
-		logger.Fatal("yamlFile Unmarshal error", zap.Error(err))
+		Logger.Fatal("yamlFile Unmarshal error", zap.Error(err))
 	}
 
-	logger.Info("", zap.Any("config", Config.DefaultService))
+	Logger.Info("", zap.Any("config", Config))
 }
 
 //checkRule 校验规则
 func checkRule() {
 	if Config.DefaultService == "" {
-		logger.Fatal("yamlFile DefaultService is required, you should set it")
+		Logger.Fatal("yamlFile DefaultService is required, you should set it")
 	}
 
 	for index, service := range Config.Services {
@@ -96,12 +94,12 @@ func checkRule() {
 
 	if ok == false {
 		//不存在
-		logger.Fatal("yamlFile services occur error, you should set default servie's host", zap.String("default service name", Config.DefaultService))
+		Logger.Fatal("yamlFile services occur error, you should set default servie's host", zap.String("default service name", Config.DefaultService))
 	}
 
 	for index, rule := range Config.Rules {
 		if rule.ServiceName == "" {
-			logger.Fatal("yamlFile rules occur error, you should set service for rule", zap.Int("index", index))
+			Logger.Fatal("yamlFile rules occur error, you should set service for rule", zap.Int("index", index))
 		}
 
 		analysisRule(rule)
@@ -111,7 +109,7 @@ func checkRule() {
 }
 
 func ruleError(index int, service Service) {
-	logger.Fatal("yamlFile services occur error", zap.Int("index", index), zap.String("name", service.Name))
+	Logger.Fatal("yamlFile services occur error", zap.Int("index", index), zap.String("name", service.Name))
 }
 
 func analysisRule(rule Rule) {
@@ -121,5 +119,5 @@ func analysisRule(rule Rule) {
 
 	result := reg.FindSubmatch(ruleByte)
 	
-	logger.Info("", zap.ByteStrings("result", result))
+	Logger.Info("", zap.ByteStrings("result", result))
 }
