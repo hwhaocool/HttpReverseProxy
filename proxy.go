@@ -26,19 +26,16 @@ var simpleHostProxy = httputil.ReverseProxy{
 	},
 }
 
-var logger *zap.Logger
-
 func main() {
-
 	//初始化日志
-	logger := InitLogger()
-	logger.Info("proxy b begin to start")
+	InitLogger()
+	Logger.Info("proxy b begin to start")
 
 	// 读取配置文件
 	InitConfigFile()
 
 	//打印ip
-	logger.Info("local ip", zap.String("ip", getLocalIP()))
+	Logger.Info("local ip", zap.String("ip", getLocalIP()))
 
 	//新建gin 实例
 	router := gin.New()
@@ -53,7 +50,7 @@ func main() {
 	//启动 gin 并监听端口
 	err := router.Run(":8080")
 	if err != nil {
-		logger.Fatal("proxy start failed,", zap.Error(err))
+		Logger.Fatal("proxy start failed,", zap.Error(err))
 	}
 }
 
@@ -86,7 +83,7 @@ func reverseProxy(ctx *gin.Context) {
 
 // welcome 健康检查接口
 func welcome(ctx *gin.Context) {
-	logger.Info("now is welcome", zap.String("addr", ctx.Request.RemoteAddr))
+	Logger.Info("now is welcome", zap.String("addr", ctx.Request.RemoteAddr))
 
 	ctx.JSON(200, gin.H{
 		"type":    "ok",
@@ -117,8 +114,8 @@ func errorRespone(ctx *gin.Context) {
 
 // myErrorHandler 代理服务器的错误处理，只是打印日志
 func myErrorHandler(rw http.ResponseWriter, req *http.Request, err error) {
-	logger.Error("http proxy error", zap.Error(err), zap.Any("request 2", *req))
-	logger.Error("http proxy error", zap.Error(err), zap.String("host", req.Host), zap.String("url", req.RequestURI))
+	Logger.Error("http proxy error", zap.Error(err), zap.Any("request 2", *req))
+	Logger.Error("http proxy error", zap.Error(err), zap.String("host", req.Host), zap.String("url", req.RequestURI))
 	rw.WriteHeader(http.StatusBadGateway)
 }
 
