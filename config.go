@@ -144,6 +144,8 @@ func checkRule() {
 	b, err := yaml.Marshal(ruleList)
 	if err != nil {
 		fmt.Println(string(b))
+
+		Logger.Info(string(b))
 	}
 	
 }
