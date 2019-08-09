@@ -1,0 +1,51 @@
+##################################################################################################
+# proxy-grey dev
+##################################################################################################
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: kube-system   #命名空间
+  name: proxy-grey   #服务名称，随意，不重复就行,全小写
+  labels:
+    app: proxy-grey     #服务标签，随意，可以重复    
+spec:
+  ports:
+  - name: http
+    port: 80           # service对外暴露的端口
+    protocol: TCP        # 协议
+    targetPort: 8080     # targetPort是容器暴露的端口
+  selector:
+    app: proxy-grey         #这个service 把所有的 labels 为“app: proxy-grey” 的pod选中，抽象为一个service，统一对外提供服务
+    version: v1
+  sessionAffinity: None
+---
+apiVersion: extensions/v1beta1
+kind: Deployment         # 定义部署，多个 Deployment 可以组成一个 service
+metadata:
+  namespace: kube-system
+  name: proxy-grey
+spec:
+  replicas: 1     #副本数量
+  template:
+    metadata:
+      labels:
+        app: proxy-grey      #定义一个标签，可以被service 使用
+        version: v1
+    spec:
+      volumes:
+      - name: grey-config
+        configMap:
+          name: grey-conf
+      imagePullSecrets:
+      - name: geek-secret     #pull 私有镜像的时候，使用的密钥文件
+      containers:
+      - name: proxy-grey
+        image: registry.cn-shenzhen.aliyuncs.com/cuishiwen/ms-proxy-grey-dev:latest
+        imagePullPolicy: Always    # Always：不管镜像是否存在都会进行一次拉取,适合我们标记为 latest的私有镜像
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: grey-config
+          mountPath: /app/config/
+---
