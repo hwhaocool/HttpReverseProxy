@@ -87,9 +87,6 @@ func (r *RuleSet) isMatch(ctx *gin.Context) bool {
 
 // InitConfigFile 初始化配置
 func InitConfigFile() {
-
-	Logger.Info("xxx")
-
 	//读文件
 	yamlFile, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
