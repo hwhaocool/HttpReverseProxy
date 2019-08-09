@@ -204,5 +204,6 @@ func GetDestination(ctx *gin.Context) string {
 		}
 	}
 
+	Logger.Info("match nothing, use default")
 	return serviceMap[config.DefaultService]
 }
