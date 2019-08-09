@@ -69,7 +69,10 @@ func reverseProxy(ctx *gin.Context) {
 	end := time.Now().UnixNano() / 1e6
 
 	//记录处理rule的耗时
-    Logger.Info("reverseProxy", zap.String("method", ctx.Request.Method), zap.String("url", ctx.Request.RequestURI), zap.Int64("cost", end - start))
+	Logger.Info("reverseProxy", zap.String("method", ctx.Request.Method), 
+		zap.String("url", ctx.Request.RequestURI), 
+		zap.String("target", target),
+		zap.Int64("cost", end - start))
 
 	proxy.ServeHTTP(ctx.Writer, ctx.Request)
 
