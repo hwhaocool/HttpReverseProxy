@@ -47,7 +47,7 @@ func main() {
 	router.HEAD("/", nginxHealthCheck)
 
 	//其它 -> 根据经纪人类型来
-	router.NoRoute(fanggeekNoRoute)
+	router.NoRoute(distributeReq)
 
 	//启动 gin 并监听端口
 	err := router.Run(":8080")
@@ -56,67 +56,22 @@ func main() {
 	}
 }
 
-// fanggeekNoRoute 自定义的 NoRoute 函数
-// 有些类型的接口，企业号已全部梳理出来了，剩下的没有必要走 分发，可以直接走个人号
-func fanggeekNoRoute(c *gin.Context) {
-	path := c.Request.URL.Path
-	method := c.Request.Method
-
-	c.Request.Header.Get()
-
-	logger.Info("fanggeekNoRoute", zap.String("method", method), zap.String("path", path))
-
-	distributeReq(c)
-
-	// if strings.HasPrefix(path, "/v1/customer") {
-	//     //客户相关的，企业号签名已梳理过，剩下没有写的，都走到个人号
-	//     logger.Info("fanggeekNoRoute direct 2 agent", zap.String("method", method), zap.String("path", path))
-	//     agentProxy(c)
-	// } else {
-	//     distributeReq(c)
-	// }
-}
-
 //分发
 func distributeReq(ctx *gin.Context) {
 	logger.Info("distributeReq", zap.String("method", ctx.Request.Method), zap.String("url", ctx.Request.RequestURI))
 
-	//取出token
-	authHeader := ctx.Request.Header.Get("Authorization")
+	path := ctx.Request.URL.Path
+	method := ctx.Request.Method
 
-	if 0 == len(authHeader) {
-		logger.Warn("auth is empty")
-		//没有的话，直接到个人号
-		// agentProxy(ctx)
-
-		//没有的话，直接到企业号
-		teamProxy(ctx)
-		return
+	for index, rule := range Config.Rules {
+		if rule.ServiceName == "" {
+			logger.Fatal("yamlFile rules occur error, you should set service for rule", zap.Int("index", index))
+		}
 	}
 
-	jwtToken := strings.Replace(authHeader, "Bearer ", "", 1)
+	// c.Request.Header.Get()
 
-	//校验token
-	_, err := jwtAuth.VerifyJWT(jwtToken)
-	if err != nil {
-		logger.Error("check token failed", zap.Error(err), zap.String("token", authHeader))
-
-		//校验不过，输出错误信息
-		errorRespone(ctx)
-		return
-	}
-
-	//调接口，得到 agent 信息
-	//重试两次
-	agentInfo, err := service.GetAgentInfo(jwtToken, 2)
-	if err != nil {
-		logger.Error("get agent info failed", zap.Error(err))
-
-		errorRespone(ctx)
-		return
-	}
-
-	ReverseProxy(ctx, agentInfo.Type)
+	// ReverseProxy(ctx, agentInfo.Type)
 }
 
 // welcome 健康检查接口
