@@ -24,7 +24,7 @@ var Config GreyConfig
 // GreyConfig 配置
 type GreyConfig struct {
 	Services       []Service
-	DefaultService string ``
+	DefaultService string `yaml:"defaultService"`
 	Rules          []Rule ``
 }
 
