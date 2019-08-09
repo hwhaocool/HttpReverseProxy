@@ -83,7 +83,7 @@ func reverseProxy(ctx *gin.Context) {
 
 // welcome 健康检查接口
 func welcome(ctx *gin.Context) {
-	Logger.Info("now is welcome", zap.String("addr", ctx.Request.RemoteAddr))
+	// Logger.Info("now is welcome", zap.String("addr", ctx.Request.RemoteAddr))
 
 	ctx.JSON(200, gin.H{
 		"type":    "ok",
