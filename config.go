@@ -10,7 +10,8 @@ import (
 )
 
 //配置文件地址
-var configFilePath = "/app/config/config.yaml"
+// var configFilePath = "/app/config/config.yaml"
+var configFilePath = "./config/config.yaml"
 
 //serviceMap key是缩写，value 是 host
 var serviceMap = make(map[string]string)
