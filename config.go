@@ -77,7 +77,7 @@ func InitConfigFile() {
 		logger.Fatal("yamlFile Unmarshal error", zap.Error(err))
 	}
 
-	logger.Info("", zap.Any("config", &Config))
+	logger.Info("", zap.Any("config", Config.DefaultService))
 }
 
 //checkRule 校验规则
