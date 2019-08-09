@@ -13,7 +13,7 @@ RUN go build -o main .
 # 编译完成之后，把生成的文件复制到 alpine 里运行
 FROM alpine:3.9
 COPY --from=builder /build/main /app/
-#COPY --from=builder /build/config /app/config/
+COPY --from=builder /build/config /app/config/
 
 WORKDIR /app
 
