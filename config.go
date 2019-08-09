@@ -1,7 +1,6 @@
 package main
 
 import (
-	"golang.org/x/tools/go/analysis"
 	yaml "gopkg.in/yaml.v2"
 	"io/ioutil"
 
@@ -16,7 +15,7 @@ var configFilePath = "/app/config/config.yaml"
 //serviceMap key是缩写，value 是 host
 var serviceMap = make(map[string]string)
 
-var ruleList = []RuleSet
+// var ruleList = []RuleSet
 
 // Config 配置文件
 var Config GreyConfig
@@ -104,9 +103,11 @@ func checkRule() {
 		if rule.ServiceName == "" {
 			logger.Fatal("yamlFile rules occur error, you should set service for rule", zap.Int("index", index))
 		}
+
+		analysisRule(rule)
 	}
 
-	analysisRule()
+	
 }
 
 func ruleError(index int, service Service) {

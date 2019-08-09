@@ -4,8 +4,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httputil"
-	"net/url"
-	"strings"
+	// "net/url"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -60,14 +59,14 @@ func main() {
 func distributeReq(ctx *gin.Context) {
 	logger.Info("distributeReq", zap.String("method", ctx.Request.Method), zap.String("url", ctx.Request.RequestURI))
 
-	path := ctx.Request.URL.Path
-	method := ctx.Request.Method
+	// path := ctx.Request.URL.Path
+	// method := ctx.Request.Method
 
-	for index, rule := range Config.Rules {
-		if rule.ServiceName == "" {
-			logger.Fatal("yamlFile rules occur error, you should set service for rule", zap.Int("index", index))
-		}
-	}
+	// for index, rule := range Config.Rules {
+	// 	if rule.ServiceName == "" {
+	// 		logger.Fatal("yamlFile rules occur error, you should set service for rule", zap.Int("index", index))
+	// 	}
+	// }
 
 	// c.Request.Header.Get()
 
@@ -119,28 +118,28 @@ func ReverseProxy(c *gin.Context, atype int) {
 
 // agentProxy 个人号接口的反向代理
 func agentProxy(c *gin.Context) {
-	logger.Info("agent request", zap.String("method", c.Request.Method), zap.String("url", c.Request.RequestURI))
+	// logger.Info("agent request", zap.String("method", c.Request.Method), zap.String("url", c.Request.RequestURI))
 
-	target := config.Config.Servicehost.AgentAPI
-	url, _ := url.Parse(target)
+	// target := config.Config.Servicehost.AgentAPI
+	// url, _ := url.Parse(target)
 
-	proxy := httputil.NewSingleHostReverseProxy(url)
-	proxy.ErrorHandler = myErrorHandler
+	// proxy := httputil.NewSingleHostReverseProxy(url)
+	// proxy.ErrorHandler = myErrorHandler
 
-	proxy.ServeHTTP(c.Writer, c.Request)
+	// proxy.ServeHTTP(c.Writer, c.Request)
 }
 
 // teamProxy 企业号接口的反向代理
 func teamProxy(c *gin.Context) {
-	logger.Info("team request", zap.String("method", c.Request.Method), zap.String("url", c.Request.RequestURI))
+	// logger.Info("team request", zap.String("method", c.Request.Method), zap.String("url", c.Request.RequestURI))
 
-	target := config.Config.Servicehost.TeamAPI
-	url, _ := url.Parse(target)
+	// target := config.Config.Servicehost.TeamAPI
+	// url, _ := url.Parse(target)
 
-	proxy := httputil.NewSingleHostReverseProxy(url)
-	proxy.ErrorHandler = myErrorHandler
+	// proxy := httputil.NewSingleHostReverseProxy(url)
+	// proxy.ErrorHandler = myErrorHandler
 
-	proxy.ServeHTTP(c.Writer, c.Request)
+	// proxy.ServeHTTP(c.Writer, c.Request)
 }
 
 // myErrorHandler 代理服务器的错误处理，只是打印日志
