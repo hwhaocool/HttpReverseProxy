@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 
 	"regexp"
+	"fmt"
 
 	"go.uber.org/zap"
 	"github.com/gin-gonic/gin"
@@ -139,6 +140,11 @@ func checkRule() {
 	}
 
 	Logger.Info("rule is ", zap.Any("ruleList", ruleList))
+
+	b, err := yaml.Marshal(ruleList)
+	if err != nil {
+		fmt.Println(string(b))
+	}
 	
 }
 
