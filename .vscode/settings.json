@@ -1,0 +1,31 @@
+{
+    "workbench.colorTheme": "Dracula",
+    "editor.fontFamily": "Monaco, 'Courier New', monospace",
+    "editor.renderWhitespace": "all",
+    "workbench.editor.enablePreviewFromQuickOpen": true,
+    "editor.suggestSelection": "first",
+    "git.autofetch": true,
+    "editor.useTabStops": false,
+    "editor.detectIndentation": false,
+    "editor.renderControlCharacters": false,
+    "go.lintFlags": [
+        // "--disable-all",
+        // "--enable=errcheck",
+        // "--config=~/.gometalinter"
+    ],
+    "go.vetFlags": [
+        "-all",
+        "-shadow"
+    ],
+    "go.vetOnSave": "package",
+    "go.lintOnSave": "package",
+    "go.autocompleteUnimportedPackages": true,
+    "go.coverOnTestPackage": false,
+    "go.formatTool": "gofmt",
+    "go.formatFlags": [
+        "-d",
+        "-e",
+        "-s"
+        // "--config=~/.gometalinter"
+    ],
+}
