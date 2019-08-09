@@ -46,14 +46,6 @@ func main() {
 	router.GET("/", welcome)
 	router.HEAD("/", nginxHealthCheck)
 
-	g1 := router.Group("/v1")
-
-	//unit
-	g1.GET("/unit/me/video/getSign", agentProxy)     //视频上传签名, 个人号
-	g1.POST("/unit/me/person/v2/list", agentProxy)   //个人日记列表V2, 个人号
-	g1.POST("/unit/me/person/matchList", agentProxy) //客源匹配个人日记, 个人号
-	g1.Any("/unit/me/mainpage/info", teamProxy)      //企业 xx
-
 	//其它 -> 根据经纪人类型来
 	router.NoRoute(fanggeekNoRoute)
 
