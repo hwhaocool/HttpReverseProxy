@@ -1,8 +1,11 @@
 package main
 
 import (
+	"golang.org/x/tools/go/analysis"
 	yaml "gopkg.in/yaml.v2"
 	"io/ioutil"
+
+	"regexp"
 
 	"go.uber.org/zap"
 )
@@ -10,7 +13,10 @@ import (
 //配置文件地址
 var configFilePath = "/app/config/config.yaml"
 
-var ruleMap = make(map[string]string)
+//serviceMap key是缩写，value 是 host
+var serviceMap = make(map[string]string)
+
+var ruleList = []RuleSet
 
 // Config 配置文件
 var Config GreyConfig
@@ -31,6 +37,24 @@ type Rule struct {
 	Rule        string `yaml:"rule"`
 	ServiceName string `yaml:"serviceName"`
 }
+
+type RuleSet struct {
+	Headers []HeaderRule
+	Cookies []CookieRule
+	ServiceName string
+}
+
+type HeaderRule struct {
+	Key   string
+	Value string
+}
+
+type CookieRule struct {
+	Key   string
+	Value string
+}
+
+// func (s *Rule) 
 
 // InitConfigFile 初始化配置
 func InitConfigFile() {
@@ -66,10 +90,10 @@ func checkRule() {
 	for index, service := range Config.Services {
 		defer ruleError(index, service)
 
-		ruleMap[service.Name] = service.ServiceHost
+		serviceMap[service.Name] = service.ServiceHost
 	}
 
-	_, ok := ruleMap[Config.DefaultService]
+	_, ok := serviceMap[Config.DefaultService]
 
 	if ok == false {
 		//不存在
@@ -81,8 +105,20 @@ func checkRule() {
 			logger.Fatal("yamlFile rules occur error, you should set service for rule", zap.Int("index", index))
 		}
 	}
+
+	analysisRule()
 }
 
 func ruleError(index int, service Service) {
 	logger.Fatal("yamlFile services occur error", zap.Int("index", index), zap.String("name", service.Name))
+}
+
+func analysisRule(rule Rule) {
+	ruleByte := []byte(rule.Rule)
+
+	reg := regexp.MustCompile(`(header|cookie)\(\s*\"([^"]+)\"\s*,\s*\"([^"]+)\"\s*\)`)
+
+	result := reg.FindSubmatch(ruleByte)
+	
+	logger.Info("", zap.ByteStrings("result", result))
 }
