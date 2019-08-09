@@ -20,8 +20,8 @@ var serviceMap = make(map[string]string)
 //[]RuleSet
 var  ruleList []RuleSet
 
-// Config 配置文件
-var Config GreyConfig
+// config 配置文件
+var config GreyConfig
 
 // GreyConfig 配置
 type GreyConfig struct {
@@ -80,40 +80,40 @@ func InitConfigFile() {
 		Logger.Fatal("yamlFile read error", zap.Error(err))
 	}
 
-	// 解析yaml 内容到 Config
-	err = yaml.Unmarshal(yamlFile, &Config)
+	// 解析yaml 内容到 config
+	err = yaml.Unmarshal(yamlFile, &config)
 
 	if err != nil {
 		Logger.Fatal("yamlFile Unmarshal error", zap.Error(err))
 	}
 
-	Logger.Info("", zap.Any("config", Config))
+	Logger.Info("", zap.Any("config", config))
 
 	checkRule()
 }
 
 //checkRule 校验规则
 func checkRule() {
-	if Config.DefaultService == "" {
+	if config.DefaultService == "" {
 		Logger.Fatal("yamlFile DefaultService is required, you should set it")
 	}
 
-	for _, service := range Config.Services {
+	for _, service := range config.Services {
 		// defer serviceError(index, service)
 
 		serviceMap[service.Name] = service.ServiceHost
 	}
 
-	_, ok := serviceMap[Config.DefaultService]
+	_, ok := serviceMap[config.DefaultService]
 
 	if ok == false {
 		//不存在
-		Logger.Fatal("yamlFile services occur error, you should set default servie's host", zap.String("default service name", Config.DefaultService))
+		Logger.Fatal("yamlFile services occur error, you should set default servie's host", zap.String("default service name", config.DefaultService))
 	}
 
-	ruleList = make([]RuleSet, len(Config.Rules))
+	ruleList = make([]RuleSet, len(config.Rules))
 
-	for index, rule := range Config.Rules {
+	for index, rule := range config.Rules {
 		if rule.ServiceName == "" {
 			Logger.Fatal("yamlFile rules occur error, you should set service for rule", zap.Int("index", index))
 		}
@@ -179,4 +179,6 @@ func GetDestination(ctx *gin.Context) string {
 			return rule.ServiceHost
 		}
 	}
+
+	return serviceMap[config.DefaultService]
 }
