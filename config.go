@@ -62,10 +62,27 @@ type CookieRule struct {
 }
 
 func (r *RuleSet) isMatch(ctx *gin.Context) bool {
+	for _, h := range r.Headers {
+		if ctx.Request.Header.Get(h.Key) != h.Value {
+			return false
+		}
+	}
+
+	for _, c := range r.Cookies {
+		x, err := ctx.Request.Cookie(c.Key)
+		if err != nil {
+			Logger.Error("current request cookie is invalid", zap.Any("request", ctx.Request))
+			return false
+		}
+
+		if x.Value == c.Value {
+			return false
+		}
+	}
+
+	//全部满足才匹配
 	return true
 }
-
-// func (s *Rule) 
 
 // InitConfigFile 初始化配置
 func InitConfigFile() {
@@ -174,8 +191,10 @@ func analysisRule(index int, rule Rule) {
 
 //GetDestination 得到当前 请求将要发往的目的地
 func GetDestination(ctx *gin.Context) string {
-	for _, rule := range ruleList {
+	for index, rule := range ruleList {
 		if rule.isMatch(ctx) {
+
+			Logger.Info("match", zap.Int("index", index))
 			return rule.ServiceHost
 		}
 	}
