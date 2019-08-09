@@ -119,7 +119,8 @@ func analysisRule(rule Rule) {
 
 	reg := regexp.MustCompile(`(header|cookie)\(\s*\"([^"]+)\"\s*,\s*\"([^"]+)\"\s*\)`)
 
-	result := reg.FindSubmatch(ruleByte)
+	for _, result := range reg.FindAllSubmatch(ruleByte, -1) {
+		Logger.Info("", zap.ByteStrings("result", result))
+	}
 	
-	Logger.Info("", zap.ByteStrings("result", result))
 }
