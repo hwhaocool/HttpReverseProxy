@@ -61,6 +61,7 @@ type CookieRule struct {
 	Value string
 }
 
+// isMatch 请求是否匹配当前的 请求
 func (r *RuleSet) isMatch(ctx *gin.Context) bool {
 	for _, h := range r.Headers {
 		if ctx.Request.Header.Get(h.Key) != h.Value {
