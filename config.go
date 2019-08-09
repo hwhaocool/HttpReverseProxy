@@ -88,7 +88,7 @@ func checkRule() {
 	}
 
 	for index, service := range Config.Services {
-		defer ruleError(index, service)
+		defer serviceError(index, service)
 
 		serviceMap[service.Name] = service.ServiceHost
 	}
@@ -110,8 +110,8 @@ func checkRule() {
 	
 }
 
-func ruleError(index int, service Service) {
-	Logger.Fatal("yamlFile services occur error", zap.Int("index", index), zap.String("name", service.Name))
+func serviceError(index int, service Service) {
+	Logger.Error("yamlFile services occur error", zap.Int("index", index), zap.String("name", service.Name))
 }
 
 func analysisRule(rule Rule) {
