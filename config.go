@@ -7,6 +7,7 @@ import (
 	"regexp"
 
 	"go.uber.org/zap"
+	"github.com/gin-gonic/gin"
 )
 
 //配置文件地址
@@ -29,20 +30,23 @@ type GreyConfig struct {
 	Rules          []Rule ``
 }
 
+// Service 服务信息
 type Service struct {
 	Name        string `yaml:"name"`
 	ServiceHost string `yaml:"serviceHost"`
 }
 
+// Rule 文件里的规则信息
 type Rule struct {
 	Rule        string `yaml:"rule"`
 	ServiceName string `yaml:"serviceName"`
 }
 
+// RuleSet 解析出来的规则
 type RuleSet struct {
 	Headers []HeaderRule
 	Cookies []CookieRule
-	ServiceName string
+	ServiceHost string
 }
 
 // HeaderRule HeaderRule
@@ -55,6 +59,10 @@ type HeaderRule struct {
 type CookieRule struct {
 	Key   string
 	Value string
+}
+
+func (r *RuleSet) isMatch(ctx *gin.Context) bool {
+	return true
 }
 
 // func (s *Rule) 
@@ -128,7 +136,9 @@ func analysisRule(index int, rule Rule) {
 
 	currentRule := new(RuleSet)
 
-	currentRule.ServiceName = rule.ServiceName
+	//换成服务地址
+	currentRule.ServiceHost =  serviceMap[rule.ServiceName]
+
 	currentRule.Headers = make([]HeaderRule, 0)
 	currentRule.Cookies = make([]CookieRule, 0)
 
@@ -160,4 +170,13 @@ func analysisRule(index int, rule Rule) {
 	ruleList[index] = *currentRule
 	Logger.Info("current rule set", zap.Any("rule", currentRule))
 	
+}
+
+//GetDestination 得到当前 请求将要发往的目的地
+func GetDestination(ctx *gin.Context) string {
+	for _, rule := range ruleList {
+		if rule.isMatch(ctx) {
+			return rule.ServiceHost
+		}
+	}
 }
