@@ -1,0 +1,15 @@
+services:
+  - name: dev
+    serviceHost: inner-slb-service.kube-system:80
+  - name: sit
+    serviceHost: sit-inner-slb-service.kube-system:80
+    
+defaultService: dev
+
+rules:
+  - rule: header("X-C-Version", "4.7.0")
+    serviceName: sit
+  - rule: cookie("nihoa", /234/)
+    serviceName: sit
+  - rule: header("X-B-Version", "6.7.0"), header("X-Model", "debug")   #且
+    serviceName: dev
