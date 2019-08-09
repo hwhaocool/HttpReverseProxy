@@ -90,8 +90,8 @@ func checkRule() {
 		Logger.Fatal("yamlFile DefaultService is required, you should set it")
 	}
 
-	for index, service := range Config.Services {
-		defer serviceError(index, service)
+	for _, service := range Config.Services {
+		// defer serviceError(index, service)
 
 		serviceMap[service.Name] = service.ServiceHost
 	}
