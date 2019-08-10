@@ -6,6 +6,7 @@ import (
 
 	"regexp"
 	"fmt"
+	"sort"
 
 	"go.uber.org/zap"
 	"github.com/gin-gonic/gin"
@@ -82,7 +83,12 @@ func checkAndAnalysisRule() {
 		analysisRule(index, rule)
 	}
 
-	Logger.Info("rule is ", zap.Any("ruleList", ruleList))
+	Logger.Info("original rule is ", zap.Any("ruleList 1", ruleList))
+
+	//排序
+	sort.Sort(ruleList)
+
+	Logger.Info("sort rule is ", zap.Any("ruleList 2 ", ruleList))
 
 	b, err := yaml.Marshal(ruleList)
 	if err != nil {
@@ -151,7 +157,7 @@ func analysisRule(index int, rule Rule) {
 	
 }
 
-func
+// func
 
 //GetDestination 得到当前 请求将要发往的目的地
 func GetDestination(ctx *gin.Context) string {
