@@ -5,9 +5,6 @@ import (
 	"go.uber.org/zap"
 )
 
-
-
-
 // RuleSet 解析出来的规则
 type RuleSet struct {
 	Headers []HeaderRule
@@ -28,6 +25,25 @@ type CookieRule struct {
 	Key   string
 	Value string
 }
+
+// RuleSets RuleSet的切片，只要是为了实现排序接口
+type RuleSets []RuleSet
+
+//Len()
+func (s RuleSets) Len() int {
+	return len(s)
+}
+
+//Less():权重将由高到低排序
+func (s RuleSets) Less(i, j int) bool {
+	return s[i].Weight > s[j].Weight
+}
+
+//Swap()
+func (s RuleSets) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
 
 // isMatch 请求是否匹配当前的 请求
 func (r *RuleSet) isMatch(ctx *gin.Context) bool {
