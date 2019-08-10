@@ -164,7 +164,7 @@ func GetDestination(ctx *gin.Context) string {
 	for index, rule := range ruleList {
 		if rule.isMatch(ctx) {
 
-			Logger.Info("match", zap.Int("index", index))
+			Logger.Info("match", zap.Int("index", index), zap.String("rule name", rule.RuleName))
 			return rule.ServiceHost
 		}
 	}
