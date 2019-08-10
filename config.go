@@ -71,6 +71,14 @@ func checkAndAnalysisRule() {
 			Logger.Fatal("yamlFile rules occur error, you should set service for rule", zap.Int("index", index))
 		}
 
+		if rule.Name == "" {
+			Logger.Fatal("rule name is required", zap.Int("index", index))
+		}
+
+		if rule.Rule == "" {
+			Logger.Fatal("rule is required", zap.Int("index", index))
+		}
+
 		analysisRule(index, rule)
 	}
 
@@ -98,6 +106,8 @@ func analysisRule(index int, rule Rule) {
 
 	//换成服务地址
 	currentRule.ServiceHost =  serviceMap[rule.ServiceName]
+
+	
 
 	currentRule.Headers = make([]HeaderRule, 0)
 	currentRule.Cookies = make([]CookieRule, 0)
