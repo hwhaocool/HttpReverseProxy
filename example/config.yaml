@@ -9,7 +9,14 @@ defaultService: dev
 rules:
   - rule: header("X-C-Version", "4.7.0")
     serviceName: sit
+    name: c-app
   - rule: cookie("nihoa", /234/)
     serviceName: sit
+    name: test-1
   - rule: header("X-B-Version", "6.7.0"), header("X-Model", "debug")   #且
     serviceName: dev
+    name: b-app
+  - rule: header("X-Model", "debug")
+    serviceNamwe: dev
+    name: debug
+    weight: 99
