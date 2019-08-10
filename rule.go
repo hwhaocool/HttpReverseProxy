@@ -47,6 +47,17 @@ type CookieRule struct {
 	Value string
 }
 
+// getWeight 得到权重
+func (r *Rule) getWeight() int {
+	if r.Weight == 0 {
+		return 50
+	} else if r.Weight > 100 {
+		return 100
+	}
+
+	return r.Weight
+}
+
 // isMatch 请求是否匹配当前的 请求
 func (r *RuleSet) isMatch(ctx *gin.Context) bool {
 	for _, h := range r.Headers {
