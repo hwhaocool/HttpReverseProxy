@@ -22,6 +22,8 @@ type Service struct {
 type Rule struct {
 	Rule        string `yaml:"rule"`
 	ServiceName string `yaml:"serviceName"`
+	Weight      int `yaml:"weight"`
+	Name        string `yaml:"name"`
 }
 
 // RuleSet 解析出来的规则
@@ -29,6 +31,8 @@ type RuleSet struct {
 	Headers []HeaderRule
 	Cookies []CookieRule
 	ServiceHost string
+	Weight      int 
+	RuleName    string 
 }
 
 // HeaderRule HeaderRule
