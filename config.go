@@ -106,8 +106,8 @@ func analysisRule(index int, rule Rule) {
 
 	//换成服务地址
 	currentRule.ServiceHost =  serviceMap[rule.ServiceName]
-
-	
+	currentRule.Weight = rule.getWeight()
+	currentRule.RuleName = rule.Name
 
 	currentRule.Headers = make([]HeaderRule, 0)
 	currentRule.Cookies = make([]CookieRule, 0)
@@ -150,6 +150,8 @@ func analysisRule(index int, rule Rule) {
 	Logger.Info("current rule set", zap.Any("rule", currentRule))
 	
 }
+
+func
 
 //GetDestination 得到当前 请求将要发往的目的地
 func GetDestination(ctx *gin.Context) string {
