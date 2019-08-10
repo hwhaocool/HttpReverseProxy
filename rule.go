@@ -20,10 +20,10 @@ type Service struct {
 
 // Rule 文件里的规则信息
 type Rule struct {
-	Rule        string `yaml:"rule"`
-	ServiceName string `yaml:"serviceName"`
-	Weight      int `yaml:"weight"`
-	Name        string `yaml:"name"`
+	Rule        string `yaml:"rule"`                 //规则表达式集合， header cookie host
+	ServiceName string `yaml:"serviceName"`			 //service name， 必填
+	Weight      int `yaml:"weight"` 				 //权重，非必填， 默认50， 范围是 1-100
+	Name        string `yaml:"name"`                 //规则名称，必填
 }
 
 // RuleSet 解析出来的规则
