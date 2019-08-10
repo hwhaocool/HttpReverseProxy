@@ -42,11 +42,11 @@ func InitConfigFile() {
 
 	Logger.Info("", zap.Any("config", config))
 
-	checkRule()
+	checkAndAnalysisRule()
 }
 
-//checkRule 校验规则
-func checkRule() {
+//checkAndAnalysisRule 校验规则 解析规则
+func checkAndAnalysisRule() {
 	if config.DefaultService == "" {
 		Logger.Fatal("yamlFile DefaultService is required, you should set it")
 	}
