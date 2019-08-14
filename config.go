@@ -160,15 +160,15 @@ func analysisRule(index int, rule Rule) {
 // func
 
 //GetDestination 得到当前 请求将要发往的目的地
-func GetDestination(ctx *gin.Context) string {
+func GetDestination(ctx *gin.Context, randomID int) string {
     for index, rule := range ruleList {
         if rule.isMatch(ctx) {
 
-            Logger.Info("match", zap.Int("index", index), zap.String("rule name", rule.RuleName))
+            Logger.Info("match", zap.Int("index", index), zap.String("rule name", rule.RuleName), zap.Int("randomId", randomID))
             return rule.ServiceHost
         }
     }
 
-    Logger.Info("match nothing, use default")
+    Logger.Info("match nothing, use default", zap.Int("randomId", randomID))
     return serviceMap[config.DefaultService]
 }
