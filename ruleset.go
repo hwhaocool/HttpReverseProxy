@@ -26,7 +26,7 @@ type CookieRule struct {
     Value string
 }
 
-// RuleSets RuleSet的切片，只要是为了实现排序接口
+// RuleSets RuleSet的切片，主要是为了实现排序接口
 type RuleSets []RuleSet
 
 //Len()

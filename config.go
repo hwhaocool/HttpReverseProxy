@@ -86,7 +86,7 @@ func checkAndAnalysisRule() {
     Logger.Info("original rule is ", zap.Any("ruleList 1", ruleList))
 
     //排序
-    sort.Sort(ruleList)
+    sort.Sort(RuleSets(ruleList))
 
     Logger.Info("sort rule is ", zap.Any("ruleList 2 ", ruleList))
 
