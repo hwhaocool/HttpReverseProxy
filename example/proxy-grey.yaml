@@ -5,7 +5,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: kube-system   #命名空间
+  namespace: nginx   #命名空间
   name: proxy-grey   #服务名称，随意，不重复就行,全小写
   labels:
     app: proxy-grey     #服务标签，随意，可以重复    
@@ -23,7 +23,7 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment         # 定义部署，多个 Deployment 可以组成一个 service
 metadata:
-  namespace: kube-system
+  namespace: nginx
   name: proxy-grey
 spec:
   replicas: 1     #副本数量
