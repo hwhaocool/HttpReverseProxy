@@ -56,7 +56,7 @@ func (r *RuleSet) isMatch(ctx *gin.Context) bool {
     for _, c := range r.Cookies {
         x, err := ctx.Request.Cookie(c.Key)
         if err != nil {
-            Logger.Error("current request cookie is invalid", zap.Any("request", ctx.Request))
+            Logger.Debug("current request cookie is invalid", zap.Any("request", ctx.Request))
             return false
         }
 
