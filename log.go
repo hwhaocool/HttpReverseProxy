@@ -25,7 +25,11 @@ func initLogger(logpath string, loglevel string) *zap.Logger {
 		MaxBackups: 1,       // 最多保留1个备份
 	}
 
-	w := zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(os.Stderr), zapcore.AddSync(&hook))
+	w := zapcore.NewMultiWriteSyncer(
+		zapcore.AddSync(os.Stdout), 
+		// zapcore.AddSync(os.Stderr), 
+		zapcore.AddSync(&hook),
+	)
 
 	var level zapcore.Level
 	switch loglevel {
