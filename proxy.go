@@ -11,21 +11,7 @@ import (
     "go.uber.org/zap"
     "time"
     "math/rand"
-    // "github.com/jinzhu/configor"
-    // "./config"
-    // "./httpMgr"
-    // "./jwtAuth"
-    // "./myLog"
-    // "./service"
 )
-
-var simpleHostProxy = httputil.ReverseProxy{
-    Director: func(req *http.Request) {
-        req.URL.Scheme = "http"
-        // req.URL.Host = HOST
-        // req.Host = HOST
-    },
-}
 
 func main() {
     //初始化日志
@@ -42,8 +28,10 @@ func main() {
     router := gin.New()
 
     //返回欢迎信息
-    router.GET("/", welcome)
-    router.HEAD("/", nginxHealthCheck)
+    router.GET("/grey", welcome)
+
+    // slb 健康检查接口使用 head 方法
+    router.HEAD("/", welcome)
 
     //其它 -> 根据经纪人类型来
     router.NoRoute(reverseProxy)
@@ -88,32 +76,11 @@ func reverseProxy(ctx *gin.Context) {
 
 // welcome 健康检查接口
 func welcome(ctx *gin.Context) {
-    // Logger.Info("now is welcome", zap.String("addr", ctx.Request.RemoteAddr))
 
     ctx.JSON(200, gin.H{
         "type":    "ok",
-        "message": "proxy is ok",
+        "message": "grey proxy is ok",
         "ip":      getLocalIP(),
-    })
-}
-
-// slb 健康检查接口使用 head 方法
-func nginxHealthCheck(ctx *gin.Context) {
-    ctx.JSON(200, gin.H{
-        "type":    "ok",
-        "message": "proxy is ok",
-    })
-}
-
-// errorRespone a gin.HandlerFunc
-// 错误提示
-func errorRespone(ctx *gin.Context) {
-    ctx.JSON(200, gin.H{
-        "type": "error",
-        "message": gin.H{
-            "code":   201,
-            "errmsg": "帐号验证失败，请重新登录",
-        },
     })
 }
 
@@ -122,11 +89,6 @@ func myErrorHandler(rw http.ResponseWriter, req *http.Request, err error) {
     Logger.Error("http proxy error", zap.Error(err), zap.Any("request 2", *req))
     Logger.Error("http proxy error", zap.Error(err), zap.String("host", req.Host), zap.String("url", req.RequestURI))
     rw.WriteHeader(http.StatusBadGateway)
-}
-
-func withHeader(ctx *gin.Context) {
-    ctx.Request.Header.Add("request-uid", "id")
-    simpleHostProxy.ServeHTTP(ctx.Writer, ctx.Request)
 }
 
 // getLocalIP 得到local ip
