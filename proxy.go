@@ -56,7 +56,7 @@ func main() {
 
 // reverseProxy 反向代理逻辑
 func reverseProxy(ctx *gin.Context) {
-	start := time.Now().UnixNano() / 1e6
+	start := time.Now().UnixNano() / 1e7
         
 	target := GetDestination(ctx)
 
@@ -69,13 +69,13 @@ func reverseProxy(ctx *gin.Context) {
 	proxy := httputil.NewSingleHostReverseProxy(url)
 	proxy.ErrorHandler = myErrorHandler
 
-	end := time.Now().UnixNano() / 1e6
+	end := time.Now().UnixNano() / 1e7
 
 	//记录处理rule的耗时
 	Logger.Info("reverseProxy", zap.String("method", ctx.Request.Method), 
 		zap.String("url", ctx.Request.RequestURI), 
 		zap.String("target", target),
-		zap.Int64("cost", end - start))
+		zap.Int64("cost(1/10 ms)", end - start))
 
 	proxy.ServeHTTP(ctx.Writer, ctx.Request)
 
