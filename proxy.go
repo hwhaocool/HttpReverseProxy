@@ -56,7 +56,12 @@ func reverseProxy(ctx *gin.Context) {
         target = "http://" + target
     }
 
-    url, _ := url.Parse(target)
+	url, _ := url.Parse(target)
+	
+	Logger.Info("scheme", zap.String("request", ctx.Request.URL.Scheme), 
+		zap.String("proxy", url.Scheme),
+		zap.Int("randomId", randomID),
+		)
 
     proxy := httputil.NewSingleHostReverseProxy(url)
     proxy.ErrorHandler = myErrorHandler
