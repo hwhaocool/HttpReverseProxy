@@ -32,7 +32,7 @@ func main() {
     router.HEAD("/grey", welcomeSlb)
 
     // slb 健康检查接口使用 head 方法
-    router.HEAD("/", welcome)
+    router.HEAD("/", welcomeSlb)
 
     //其它 -> 根据经纪人类型来
     router.NoRoute(reverseProxy)
@@ -71,7 +71,9 @@ func reverseProxy(ctx *gin.Context) {
 
     //记录处理rule的耗时
     Logger.Info("reverseProxy", zap.String("method", ctx.Request.Method), 
-        zap.String("url", ctx.Request.RequestURI), 
+        // zap.String("url", ctx.Request.RequestURI), 
+        zap.Any("url", ctx.Request.URL), 
+        zap.String("host", ctx.Request.Host), 
         zap.String("target", target),
         zap.Int64("cost(1/10 ms)", end - start),
         zap.Int("randomId", randomID))
