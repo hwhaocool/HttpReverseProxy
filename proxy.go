@@ -29,6 +29,7 @@ func main() {
 
     //返回欢迎信息
     router.GET("/grey", welcome)
+    router.HEAD("/grey", welcomeSlb)
 
     // slb 健康检查接口使用 head 方法
     router.HEAD("/", welcome)
@@ -56,12 +57,12 @@ func reverseProxy(ctx *gin.Context) {
         target = "http://" + target
     }
 
-	url, _ := url.Parse(target)
-	
-	Logger.Info("scheme", zap.String("request", ctx.Request.URL.Scheme), 
-		zap.String("proxy", url.Scheme),
-		zap.Int("randomId", randomID),
-		)
+    url, _ := url.Parse(target)
+    
+    Logger.Info("scheme", zap.String("request", ctx.Request.URL.Scheme), 
+        zap.String("proxy", url.Scheme),
+        zap.Int("randomId", randomID),
+        )
 
     proxy := httputil.NewSingleHostReverseProxy(url)
     proxy.ErrorHandler = myErrorHandler
@@ -75,18 +76,30 @@ func reverseProxy(ctx *gin.Context) {
         zap.Int64("cost(1/10 ms)", end - start),
         zap.Int("randomId", randomID))
 
-	start = time.Now().UnixNano() / 1e5
-	proxy.ServeHTTP(ctx.Writer, ctx.Request)
-	end = time.Now().UnixNano() / 1e5
+    start = time.Now().UnixNano() / 1e5
+    proxy.ServeHTTP(ctx.Writer, ctx.Request)
+    end = time.Now().UnixNano() / 1e5
 
-	Logger.Info("reverseProxy",
-		zap.Int64("request cost(1/10 ms)", end - start),
-		zap.Int("randomId", randomID))
+    Logger.Info("reverseProxy",
+        zap.Int64("request cost(1/10 ms)", end - start),
+        zap.Int("randomId", randomID))
 
 }
 
 // welcome 健康检查接口
 func welcome(ctx *gin.Context) {
+
+    ctx.JSON(200, gin.H{
+        "type":    "ok",
+        "message": "grey proxy is ok",
+        "ip":      getLocalIP(),
+    })
+}
+
+// welcomeSlb slb 健康检查接口
+func welcomeSlb(ctx *gin.Context) {
+    Logger.Info("welcomeSlb",
+        zap.String("remote addr", ctx.Request.RemoteAddr))
 
     ctx.JSON(200, gin.H{
         "type":    "ok",
