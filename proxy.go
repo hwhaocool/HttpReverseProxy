@@ -75,7 +75,13 @@ func reverseProxy(ctx *gin.Context) {
         zap.Int64("cost(1/10 ms)", end - start),
         zap.Int("randomId", randomID))
 
-    proxy.ServeHTTP(ctx.Writer, ctx.Request)
+	start = time.Now().UnixNano() / 1e5
+	proxy.ServeHTTP(ctx.Writer, ctx.Request)
+	end = time.Now().UnixNano() / 1e5
+
+	Logger.Info("reverseProxy",
+		zap.Int64("request cost(1/10 ms)", end - start),
+		zap.Int("randomId", randomID))
 
 }
 
