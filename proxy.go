@@ -71,11 +71,22 @@ func reverseProxy(ctx *gin.Context) {
 
     //记录处理rule的耗时
     Logger.Info("reverseProxy", zap.String("method", ctx.Request.Method), 
-        // zap.String("url", ctx.Request.RequestURI), 
+        // zap.String("url", ctx.Request.RequestURI), /v1/me/forum/message/unreadcount
         zap.Any("url", ctx.Request.URL), 
         zap.String("host", ctx.Request.Host), 
         zap.String("target", target),
         zap.Int64("cost(1/10 ms)", end - start),
+        zap.Int("randomId", randomID))
+
+    Logger.Info("reverseProxy 2", 
+        zap.String("Scheme", ctx.Request.URL.Scheme), 
+        zap.String("Opaque", ctx.Request.URL.Opaque), 
+        zap.Any("User", ctx.Request.URL.User), 
+        zap.String("Host", ctx.Request.URL.Host), 
+        zap.String("Path", ctx.Request.URL.Path), 
+        zap.String("RawPath", ctx.Request.URL.RawPath), 
+        zap.String("RawQuery", ctx.Request.URL.RawQuery), 
+        zap.String("Fragment", ctx.Request.URL.Fragment), 
         zap.Int("randomId", randomID))
 
     start = time.Now().UnixNano() / 1e5
