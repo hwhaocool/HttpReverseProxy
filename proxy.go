@@ -11,7 +11,6 @@ import (
     "go.uber.org/zap"
     "time"
     "math/rand"
-    "fmt"
 )
 
 func main() {
@@ -48,10 +47,6 @@ func main() {
 // reverseProxy 反向代理逻辑
 func reverseProxy(ctx *gin.Context) {
     start := time.Now().UnixNano() / 1e5
-
-    fmt.Printf("111 %+v\n", ctx)
-    fmt.Printf("111 %+v\n", ctx.Request)
-
     rand.Seed(time.Now().Unix())
     randomID := rand.Intn(1000)
         
@@ -61,18 +56,18 @@ func reverseProxy(ctx *gin.Context) {
         target = "http://" + target
     }
 
+    //得到源请求的 scheme
+    scheme := ctx.Request.Header.Get("X-Forwarded-Proto")
+    if scheme == "" {
+        scheme = "http"
+    }
+
     url, _ := url.Parse(target)
+    url.Scheme  = scheme
     
     Logger.Info("scheme", 
         zap.String("request", ctx.Request.URL.Scheme), 
         zap.String("proxy", url.Scheme),
-        zap.String(": scheme", ctx.Request.Header.Get(":scheme")),
-        zap.Any("header", ctx.Request.Header),
-        zap.Any("request", ctx.Request),
-        zap.Any("tls 1", ctx.Request.TLS),
-        // zap.Any("tls 2", ctx.Request.TLS.ServerName),
-        // zap.Any("tls 2", ctx.Request.TLS.NegotiatedProtocol),
-        zap.String("FullPath", ctx.FullPath()),
         zap.Int("randomId", randomID),
         )
 
@@ -83,25 +78,10 @@ func reverseProxy(ctx *gin.Context) {
 
     //记录处理rule的耗时
     Logger.Info("reverseProxy", zap.String("method", ctx.Request.Method), 
-        // zap.String("url", ctx.Request.RequestURI), /v1/me/forum/message/unreadcount
-        zap.Any("url", ctx.Request.URL), 
+        zap.String("url", ctx.Request.RequestURI),
         zap.String("host", ctx.Request.Host), 
         zap.String("target", target),
         zap.Int64("cost(1/10 ms)", end - start),
-        zap.Int("randomId", randomID))
-
-    Logger.Info("reverseProxy 2", 
-        zap.String("Scheme", ctx.Request.URL.Scheme), 
-        zap.String("Opaque", ctx.Request.URL.Opaque), 
-        zap.Any("User", ctx.Request.URL.User), 
-        zap.String("Host", ctx.Request.URL.Host), 
-        zap.String("Path", ctx.Request.URL.Path), 
-        zap.String("RawPath", ctx.Request.URL.RawPath), 
-        zap.String("RawQuery", ctx.Request.URL.RawQuery), 
-        zap.String("Fragment", ctx.Request.URL.Fragment), 
-
-        zap.Any("host", ctx.Request.Host), 
-        zap.Any("RequestURI", ctx.Request.RequestURI), 
         zap.Int("randomId", randomID))
 
     start = time.Now().UnixNano() / 1e5
