@@ -92,6 +92,9 @@ func reverseProxy(ctx *gin.Context) {
         zap.String("RawPath", ctx.Request.URL.RawPath), 
         zap.String("RawQuery", ctx.Request.URL.RawQuery), 
         zap.String("Fragment", ctx.Request.URL.Fragment), 
+
+        zap.Any("host", ctx.Request.Host), 
+        zap.Any("RequestURI", ctx.Request.RequestURI), 
         zap.Int("randomId", randomID))
 
     start = time.Now().UnixNano() / 1e5
