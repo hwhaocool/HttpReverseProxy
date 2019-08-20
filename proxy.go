@@ -59,8 +59,13 @@ func reverseProxy(ctx *gin.Context) {
 
     url, _ := url.Parse(target)
     
-    Logger.Info("scheme", zap.String("request", ctx.Request.URL.Scheme), 
+    Logger.Info("scheme", 
+        zap.String("request", ctx.Request.URL.Scheme), 
         zap.String("proxy", url.Scheme),
+        zap.String(": scheme", ctx.Request.Header.Get(":scheme")),
+        zap.Any("header", ctx.Request.Header),
+        zap.Any("keys", ctx.Keys),
+        zap.String("FullPath", ctx.FullPath()),
         zap.Int("randomId", randomID),
         )
 
