@@ -49,8 +49,12 @@ func main() {
 func reverseProxy(ctx *gin.Context) {
     start := time.Now().UnixNano() / 1e5
 
-    fmt.Printf("%+v", ctx)
-    fmt.Printf("%+v", *ctx)
+    fmt.Printf("111 %+v\n", ctx)
+    fmt.Printf("222 %+v\n", *ctx)
+    fmt.Printf("333 %+v\n", &ctx)
+
+    Logger.Info("444 ", zap.Any("ctx", *ctx))
+    Logger.Info("555 ", zap.Any("ctx", &ctx))
 
     rand.Seed(time.Now().Unix())
     randomID := rand.Intn(1000)
@@ -68,7 +72,9 @@ func reverseProxy(ctx *gin.Context) {
         zap.String("proxy", url.Scheme),
         zap.String(": scheme", ctx.Request.Header.Get(":scheme")),
         zap.Any("header", ctx.Request.Header),
-        zap.Any("keys", ctx.Keys),
+        zap.Any("tls 1", ctx.Request.TLS),
+        zap.Any("tls 2", ctx.Request.TLS.ServerName),
+        zap.Any("tls 2", ctx.Request.TLS.NegotiatedProtocol),
         zap.String("FullPath", ctx.FullPath()),
         zap.Int("randomId", randomID),
         )
