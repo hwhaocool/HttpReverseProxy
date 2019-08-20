@@ -11,6 +11,7 @@ import (
     "go.uber.org/zap"
     "time"
     "math/rand"
+    "fmt"
 )
 
 func main() {
@@ -47,6 +48,9 @@ func main() {
 // reverseProxy 反向代理逻辑
 func reverseProxy(ctx *gin.Context) {
     start := time.Now().UnixNano() / 1e5
+
+    fmt.Printf("%+v", ctx)
+    fmt.Printf("%+v", *ctx)
 
     rand.Seed(time.Now().Unix())
     randomID := rand.Intn(1000)
