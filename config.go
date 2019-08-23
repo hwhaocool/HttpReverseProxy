@@ -11,10 +11,9 @@ import (
     "net/http"
 
     "go.uber.org/zap"
-    "github.com/gin-gonic/gin"
 )
 
-//配置文件地址
+//配置文件地址  /app/config/config.yaml
 var configFilePath = "./config/config.yaml"
 
 //serviceMap key是缩写，value 是 host
