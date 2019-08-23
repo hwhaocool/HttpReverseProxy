@@ -118,7 +118,7 @@ func singleJoiningSlash(a, b string) string {
 
 // MyProxy MyProxy
 func MyProxy(req *http.Request) (*url.URL, error) {
-    target := GetDestination2(req, 2)
+    target := GetDestination(req, 2)
 
     if strings.HasPrefix(target, "http") == false {
         target = "http://" + target

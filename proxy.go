@@ -50,7 +50,7 @@ func reverseProxy(ctx *gin.Context) {
     rand.Seed(time.Now().Unix())
     randomID := rand.Intn(1000)
         
-    target := GetDestination(ctx, randomID)
+    target := GetDestination(ctx.Request, randomID)
 
     if strings.HasPrefix(target, "http") == false {
         target = "http://" + target
@@ -68,8 +68,8 @@ func reverseProxy(ctx *gin.Context) {
     // url2.Scheme = "http"
     // url.Scheme  = scheme
 
-    ctx.Request.URL.Scheme = scheme
-    ctx.Request.URL.Opaque = "//" + ctx.Request.Host
+    // ctx.Request.URL.Scheme = scheme
+    // ctx.Request.URL.Opaque = "//" + ctx.Request.Host
     
     Logger.Info("scheme", 
         zap.String("request", ctx.Request.URL.Scheme), 
