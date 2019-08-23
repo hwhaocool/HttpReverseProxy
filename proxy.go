@@ -4,7 +4,7 @@ import (
     "strings"
     "net"
     "net/http"
-    "net/http/httputil"
+    // "net/http/httputil"
     "net/url"
 
     "github.com/gin-gonic/gin"
@@ -63,21 +63,29 @@ func reverseProxy(ctx *gin.Context) {
     }
 
     url, _ := url.Parse(target)
-    url.Scheme  = scheme
+
+    // url2 := & MyURL{URL: *url}
+    // url2.Scheme = "http"
+    // url.Scheme  = scheme
+
+    ctx.Request.URL.Scheme = scheme
+    ctx.Request.URL.Opaque = "//" + ctx.Request.Host
     
     Logger.Info("scheme", 
         zap.String("request", ctx.Request.URL.Scheme), 
+        zap.String("Opaque", ctx.Request.URL.Opaque), 
         zap.String("proxy", url.Scheme),
         zap.Int("randomId", randomID),
         )
 
-    proxy := httputil.NewSingleHostReverseProxy(url)
+    proxy := MyReverseProxy(url)
     proxy.ErrorHandler = myErrorHandler
+    proxy.Transport = GetTransport()
 
     end := time.Now().UnixNano() / 1e5
 
     //记录处理rule的耗时
-    Logger.Info("reverseProxy", zap.String("method", ctx.Request.Method), 
+    Logger.Info("handle rule", zap.String("method", ctx.Request.Method), 
         zap.String("url", ctx.Request.RequestURI),
         zap.String("host", ctx.Request.Host), 
         zap.String("target", target),
