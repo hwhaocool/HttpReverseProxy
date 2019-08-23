@@ -50,10 +50,6 @@ func reverseProxy(ctx *gin.Context) {
         
     target := GetDestination(ctx.Request, randomID)
 
-    if strings.HasPrefix(target, "http") == false {
-        target = "http://" + target
-    }
-
     url, _ := url.Parse(target)
     
     proxy := MyReverseProxy(url)
@@ -65,6 +61,7 @@ func reverseProxy(ctx *gin.Context) {
         zap.String("url", ctx.Request.RequestURI),
         zap.String("host", ctx.Request.Host), 
         zap.String("target", target),
+        zap.String("X-Forwarded-Proto", ctx.Request.Header.Get("X-Forwarded-Proto")),
         zap.Int64("cost(1/10 ms)", end - start),
         zap.Int("randomId", randomID))
 
