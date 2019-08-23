@@ -7,6 +7,7 @@ import (
     "net/url"
     "time"
     "strings"
+    "fmt"
     // "crypto/tls"
 )
 
@@ -126,4 +127,10 @@ func MyProxy(req *http.Request) (*url.URL, error) {
 
     u, _ := url.Parse(target)
     return u, nil
+}
+
+// GetRequestString 得到 request 的字符串
+func GetRequestString(req *http.Request) string {
+    return fmt.Sprintf("[req] method = %s, proto = %s, host = %s, RemoteAddr = %s, RequestURI = %s, url = %s", 
+        req.Method, req.Proto, req.Host, req.RemoteAddr, req.RequestURI, req.URL.String())
 }

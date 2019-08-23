@@ -126,7 +126,7 @@ func welcomeSlb(ctx *gin.Context) {
 
 // myErrorHandler 代理服务器的错误处理，只是打印日志
 func myErrorHandler(rw http.ResponseWriter, req *http.Request, err error) {
-    Logger.Error("http proxy error", zap.Error(err), zap.Any("request 2", *req))
+    Logger.Error("http proxy error", zap.Error(err), zap.String("request 2", GetRequestString(req)))
     Logger.Error("http proxy error", zap.Error(err), zap.String("host", req.Host), zap.String("url", req.RequestURI))
     rw.WriteHeader(http.StatusBadGateway)
 }
