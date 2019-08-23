@@ -67,7 +67,7 @@ func GetTransport() http.RoundTripper {
 func MyReverseProxy(target *url.URL) *httputil.ReverseProxy {
     targetQuery := target.RawQuery
     director := func(req *http.Request) {
-        //req.URL.Scheme = target.Scheme
+        req.URL.Scheme = target.Scheme
         req.URL.Host = target.Host
         req.URL.Path = singleJoiningSlash(target.Path, req.URL.Path)
         if targetQuery == "" || req.URL.RawQuery == "" {
