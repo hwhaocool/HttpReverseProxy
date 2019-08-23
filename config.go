@@ -5,15 +5,17 @@ import (
     "io/ioutil"
 
     "regexp"
+    "strings"
     "fmt"
     "sort"
+    "net/http"
 
     "go.uber.org/zap"
     "github.com/gin-gonic/gin"
 )
 
 //配置文件地址
-var configFilePath = "/app/config/config.yaml"
+var configFilePath = "./config/config.yaml"
 
 //serviceMap key是缩写，value 是 host
 var serviceMap = make(map[string]string)
@@ -55,7 +57,13 @@ func checkAndAnalysisRule() {
     for _, service := range config.Services {
         // defer serviceError(index, service)
 
-        serviceMap[service.Name] = service.ServiceHost
+        host := service.ServiceHost
+        
+        if strings.HasPrefix(host, "http") == false {
+            host = "http://" + host
+        }
+
+        serviceMap[service.Name] = host
     }
 
     _, ok := serviceMap[config.DefaultService]
@@ -157,12 +165,11 @@ func analysisRule(index int, rule Rule) {
     
 }
 
-// func
 
 //GetDestination 得到当前 请求将要发往的目的地
-func GetDestination(ctx *gin.Context, randomID int) string {
+func GetDestination(req *http.Request, randomID int) string {
     for index, rule := range ruleList {
-        if rule.isMatch(ctx) {
+        if rule.isMatch2(req) {
 
             Logger.Info("match", zap.Int("index", index), zap.String("rule name", rule.RuleName), zap.Int("randomId", randomID))
             return rule.ServiceHost
