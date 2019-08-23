@@ -168,7 +168,7 @@ func analysisRule(index int, rule Rule) {
 //GetDestination 得到当前 请求将要发往的目的地
 func GetDestination(req *http.Request, randomID int) string {
     for index, rule := range ruleList {
-        if rule.isMatch2(req) {
+        if rule.isMatch(req) {
 
             Logger.Info("match", zap.Int("index", index), zap.String("rule name", rule.RuleName), zap.Int("randomId", randomID))
             return rule.ServiceHost

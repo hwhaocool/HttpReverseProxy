@@ -1,8 +1,8 @@
 package main
 
 import (
-    "github.com/gin-gonic/gin"
     "go.uber.org/zap"
+    "net/http"
 )
 
 // RuleSet 解析出来的规则
@@ -44,19 +44,18 @@ func (s RuleSets) Swap(i, j int) {
     s[i], s[j] = s[j], s[i]
 }
 
-
 // isMatch 请求是否匹配当前的 请求
-func (r *RuleSet) isMatch(ctx *gin.Context) bool {
+func (r *RuleSet) isMatch(req *http.Request) bool {
     for _, h := range r.Headers {
-        if ctx.Request.Header.Get(h.Key) != h.Value {
+        if req.Header.Get(h.Key) != h.Value {
             return false
         }
     }
 
     for _, c := range r.Cookies {
-        x, err := ctx.Request.Cookie(c.Key)
+        x, err := req.Cookie(c.Key)
         if err != nil {
-            Logger.Debug("current request cookie is invalid", zap.Any("request", ctx.Request))
+            Logger.Debug("current request cookie is invalid", zap.Any("request", req))
             return false
         }
 
