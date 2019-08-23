@@ -3,8 +3,6 @@ package main
 import (
     "strings"
     "net"
-    "net/http"
-    // "net/http/httputil"
     "net/url"
 
     "github.com/gin-gonic/gin"
@@ -34,7 +32,7 @@ func main() {
     // slb 健康检查接口使用 head 方法
     router.HEAD("/", welcomeSlb)
 
-    //其它 -> 根据经纪人类型来
+    //其它 -> 进行分发
     router.NoRoute(reverseProxy)
 
     //启动 gin 并监听端口
@@ -56,32 +54,9 @@ func reverseProxy(ctx *gin.Context) {
         target = "http://" + target
     }
 
-    //得到源请求的 scheme
-    scheme := ctx.Request.Header.Get("X-Forwarded-Proto")
-    if scheme == "" {
-        scheme = "http"
-    }
-
     url, _ := url.Parse(target)
-
-    // url2 := & MyURL{URL: *url}
-    // url2.Scheme = "http"
-    // url.Scheme  = scheme
-
-    // ctx.Request.URL.Scheme = scheme
-    // ctx.Request.URL.Opaque = "//" + ctx.Request.Host
     
-    Logger.Info("scheme", 
-        zap.String("url Scheme", ctx.Request.URL.Scheme), 
-        zap.String("url Opaque", ctx.Request.URL.Opaque), 
-        zap.String("url.Scheme", url.Scheme),
-        zap.String("url", url.String()),
-        zap.Int("randomId", randomID),
-        )
-
     proxy := MyReverseProxy(url)
-    proxy.ErrorHandler = myErrorHandler
-    proxy.Transport = GetTransport()
 
     end := time.Now().UnixNano() / 1e5
 
@@ -125,12 +100,7 @@ func welcomeSlb(ctx *gin.Context) {
     })
 }
 
-// myErrorHandler 代理服务器的错误处理，只是打印日志
-func myErrorHandler(rw http.ResponseWriter, req *http.Request, err error) {
-    Logger.Error("http proxy error", zap.Error(err), zap.String("request 2", GetRequestString(req)))
-    Logger.Error("http proxy error", zap.Error(err), zap.String("host", req.Host), zap.String("url", req.RequestURI))
-    rw.WriteHeader(http.StatusBadGateway)
-}
+
 
 // getLocalIP 得到local ip
 func getLocalIP() string {

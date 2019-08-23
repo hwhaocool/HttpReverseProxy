@@ -8,6 +8,7 @@ import (
     "time"
     "strings"
     "fmt"
+    "go.uber.org/zap"
     // "crypto/tls"
 )
 
@@ -37,12 +38,11 @@ func (u *MyURL) RequestURI() string {
     return result
 }
 
-// GetTransport 得到自定义的 Transport
-func GetTransport() http.RoundTripper {
+// getTransport 得到自定义的 Transport
+func getTransport() http.RoundTripper {
 
     return &http.Transport{
-        Proxy: MyProxy,
-        // Proxy: ProxyFromEnvironment,
+        Proxy: http.ProxyFromEnvironment,
         DialContext: (&net.Dialer{
             Timeout:   30 * time.Second,
             KeepAlive: 30 * time.Second,
@@ -63,53 +63,24 @@ func GetTransport() http.RoundTripper {
     }
 }
 
-// MyReverseProxy 我的反向代理，主要是定制了 director的 scheme，其它代码都是照抄
+// MyReverseProxy 自定义反向代理
 func MyReverseProxy(target *url.URL) *httputil.ReverseProxy {
-    targetQuery := target.RawQuery
-    director := func(req *http.Request) {
-        req.URL.Scheme = target.Scheme
-        req.URL.Host = target.Host
-        req.URL.Path = singleJoiningSlash(target.Path, req.URL.Path)
-        if targetQuery == "" || req.URL.RawQuery == "" {
-            req.URL.RawQuery = targetQuery + req.URL.RawQuery
-        } else {
-            req.URL.RawQuery = targetQuery + "&" + req.URL.RawQuery
-        }
-        if _, ok := req.Header["User-Agent"]; !ok {
-            // explicitly disable User-Agent so it's not set to default value
-            req.Header.Set("User-Agent", "")
-        }
-    }
-    return &httputil.ReverseProxy{Director: director}
+    proxy := httputil.NewSingleHostReverseProxy(target)
+    proxy.ErrorHandler = myErrorHandler
+    proxy.Transport = getTransport()
+
+    return proxy
 }
 
-// singleJoiningSlash 照抄 revserseproxy 的代码
-func singleJoiningSlash(a, b string) string {
-    aslash := strings.HasSuffix(a, "/")
-    bslash := strings.HasPrefix(b, "/")
-    switch {
-    case aslash && bslash:
-        return a + b[1:]
-    case !aslash && !bslash:
-        return a + "/" + b
-    }
-    return a + b
-}
-
-// MyProxy MyProxy
-func MyProxy(req *http.Request) (*url.URL, error) {
-    target := GetDestination(req, 2)
-
-    if strings.HasPrefix(target, "http") == false {
-        target = "http://" + target
-    }
-
-    u, _ := url.Parse(target)
-    return u, nil
+// myErrorHandler 代理服务器的错误处理，只是打印日志
+func myErrorHandler(rw http.ResponseWriter, req *http.Request, err error) {
+    Logger.Error("http proxy error", zap.Error(err), zap.String("request 2", getRequestString(req)))
+    Logger.Error("http proxy error", zap.Error(err), zap.String("host", req.Host), zap.String("url", req.RequestURI))
+    rw.WriteHeader(http.StatusBadGateway)
 }
 
 // GetRequestString 得到 request 的字符串
-func GetRequestString(req *http.Request) string {
+func getRequestString(req *http.Request) string {
     return fmt.Sprintf("[req] method = %s, proto = %s, host = %s, RemoteAddr = %s, RequestURI = %s, url = %s", 
         req.Method, req.Proto, req.Host, req.RemoteAddr, req.RequestURI, req.URL.String())
 }
