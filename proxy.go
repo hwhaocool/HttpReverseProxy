@@ -1,7 +1,6 @@
 package main
 
 import (
-    "strings"
     "net"
     "net/url"
 
