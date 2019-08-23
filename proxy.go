@@ -72,9 +72,10 @@ func reverseProxy(ctx *gin.Context) {
     // ctx.Request.URL.Opaque = "//" + ctx.Request.Host
     
     Logger.Info("scheme", 
-        zap.String("request", ctx.Request.URL.Scheme), 
-        zap.String("Opaque", ctx.Request.URL.Opaque), 
-        zap.String("proxy", url.Scheme),
+        zap.String("url Scheme", ctx.Request.URL.Scheme), 
+        zap.String("url Opaque", ctx.Request.URL.Opaque), 
+        zap.String("url.Scheme", url.Scheme),
+        zap.String("url", url.String()),
         zap.Int("randomId", randomID),
         )
 
